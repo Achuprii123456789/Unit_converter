@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f4ff 0%, #e8e4ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .converter-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(147, 112, 219, 0.1);
+            padding: 40px;
+            flex: 2;
+            border: 1px solid rgba(147, 112, 219, 0.1);
+        }
+
+        .calculator-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(147, 112, 219, 0.1);
+            padding: 30px;
+            flex: 1;
+            border: 1px solid rgba(147, 112, 219, 0.1);
+            height: fit-content;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6b46c1;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            color: #6b46c1;
+            margin-bottom: 15px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .converter-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #faf9ff;
+            border-radius: 15px;
+            border: 1px solid rgba(147, 112, 219, 0.1);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+        }
+
+        .unit-select {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 100px;
+        }
+
+        .unit-select:focus {
+            outline: none;
+            border-color: #a78bfa;
+        }
+
+        .convert-btn {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .result {
+            background: #f8f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 16px;
+            color: #6b46c1;
+            border-left: 3px solid #a78bfa;
+            font-weight: 500;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            border-left-color: #f87171;
+        }
+
+        /* Calculator Styles */
+        .calculator-title {
+            font-size: 1.3em;
+            color: #6b46c1;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .calc-display {
+            background: #f8f7ff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 1.5em;
+            color: #6b46c1;
+            font-family: 'Courier New', monospace;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .calc-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #6b46c1;
+        }
+
+        .calc-btn:hover {
+            background: #f8f7ff;
+            border-color: #a78bfa;
+        }
+
+        .calc-btn.operator {
+            background: #f3f4f6;
+            color: #8b5cf6;
+            font-weight: 500;
+        }
+
+        .calc-btn.equals {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .calc-btn.clear {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .calculator-container {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .converter-container, .calculator-container {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Main Converter Section -->
+        <div class="converter-container">
+            <h1>🔧 Unit Converter</h1>
+            
+            <!-- Length Converter -->
+            <div class="converter-section">
+                <div class="section-title">📏 Length</div>
+                <div class="input-group">
+                    <input type="number" id="lengthInput" class="input-field" placeholder="Enter value" step="any">
+                    <select id="lengthFrom" class="unit-select">
+                        <option value="meters">Meters</option>
+                        <option value="kilometers">Kilometers</option>
+                        <option value="centimeters">Centimeters</option>
+                        <option value="miles">Miles</option>
+                        <option value="yards">Yards</option>
+                        <option value="feet">Feet</option>
+                        <option value="inches">Inches</option>
+                    </select>
+                    <span style="font-size: 18px; color: #a78bfa;">→</span>
+                    <select id="lengthTo" class="unit-select">
+                        <option value="feet">Feet</option>
+                        <option value="meters">Meters</option>
+                        <option value="kilometers">Kilometers</option>
+                        <option value="centimeters">Centimeters</option>
+                        <option value="miles">Miles</option>
+                        <option value="yards">Yards</option>
+                        <option value="inches">Inches</option>
+                    </select>
+                </div>
+                <button onclick="convertLength()" class="convert-btn">Convert Length</button>
+                <div id="lengthResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- Weight Converter -->
+            <div class="converter-section">
+                <div class="section-title">⚖️ Weight</div>
+                <div class="input-group">
+                    <input type="number" id="weightInput" class="input-field" placeholder="Enter value" step="any">
+                    <select id="weightFrom" class="unit-select">
+                        <option value="kilograms">Kilograms</option>
+                        <option value="grams">Grams</option>
+                        <option value="pounds">Pounds</option>
+                        <option value="ounces">Ounces</option>
+                        <option value="tons">Tons</option>
+                    </select>
+                    <span style="font-size: 18px; color: #a78bfa;">→</span>
+                    <select id="weightTo" class="unit-select">
+                        <option value="pounds">Pounds</option>
+                        <option value="kilograms">Kilograms</option>
+                        <option value="grams">Grams</option>
+                        <option value="ounces">Ounces</option>
+                        <option value="tons">Tons</option>
+                    </select>
+                </div>
+                <button onclick="convertWeight()" class="convert-btn">Convert Weight</button>
+                <div id="weightResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- Temperature Converter -->
+            <div class="converter-section">
+                <div class="section-title">🌡️ Temperature</div>
+                <div class="input-group">
+                    <input type="number" id="tempInput" class="input-field" placeholder="Enter value" step="any">
+                    <select id="tempFrom" class="unit-select">
+                        <option value="celsius">Celsius</option>
+                        <option value="fahrenheit">Fahrenheit</option>
+                        <option value="kelvin">Kelvin</option>
+                    </select>
+                    <span style="font-size: 18px; color: #a78bfa;">→</span>
+                    <select id="tempTo" class="unit-select">
+                        <option value="fahrenheit">Fahrenheit</option>
+                        <option value="celsius">Celsius</option>
+                        <option value="kelvin">Kelvin</option>
+                    </select>
+                </div>
+                <button onclick="convertTemperature()" class="convert-btn">Convert Temperature</button>
+                <div id="tempResult" class="result" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Calculator Sidebar -->
+        <div class="calculator-container">
+            <div class="calculator-title">🧮 Calculator</div>
+            <div class="calc-display" id="calcDisplay">0</div>
+            <div class="calc-buttons">
+                <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                <button class="calc-btn operator" onclick="deleteLast()">⌫</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('%')">%</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('/')">/</button>
+                
+                <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+                <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+                <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
+                
+                <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+                <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+                <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
+                
+                <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+                <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+                <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
+                
+                <button class="calc-btn" onclick="appendToDisplay('0')">0</button>
+                <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+                <button class="calc-btn equals" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Unit Conversion Logic
+        const lengthFactors = {
+            meters: 1,
+            kilometers: 1000,
+            centimeters: 0.01,
+            miles: 1609.344,
+            yards: 0.9144,
+            feet: 0.3048,
+            inches: 0.0254
+        };
+
+        const weightFactors = {
+            kilograms: 1,
+            grams: 0.001,
+            pounds: 0.45359237,
+            ounces: 0.028349523125,
+            tons: 1000
+        };
+
+        function convertLength() {
+            const input = parseFloat(document.getElementById('lengthInput').value);
+            const fromUnit = document.getElementById('lengthFrom').value;
+            const toUnit = document.getElementById('lengthTo').value;
+            const resultDiv = document.getElementById('lengthResult');
+
+            if (isNaN(input)) {
+                showResult(resultDiv, 'Please enter a valid number', true);
+                return;
+            }
+
+            const meters = input * lengthFactors[fromUnit];
+            const result = meters / lengthFactors[toUnit];
+
+            showResult(resultDiv, `${input} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`);
+        }
+
+        function convertWeight() {
+            const input = parseFloat(document.getElementById('weightInput').value);
+            const fromUnit = document.getElementById('weightFrom').value;
+            const toUnit = document.getElementById('weightTo').value;
+            const resultDiv = document.getElementById('weightResult');
+
+            if (isNaN(input)) {
+                showResult(resultDiv, 'Please enter a valid number', true);
+                return;
+            }
+
+            const kilograms = input * weightFactors[fromUnit];
+            const result = kilograms / weightFactors[toUnit];
+
+            showResult(resultDiv, `${input} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`);
+        }
+
+        function convertTemperature() {
+            const input = parseFloat(document.getElementById('tempInput').value);
+            const fromUnit = document.getElementById('tempFrom').value;
+            const toUnit = document.getElementById('tempTo').value;
+            const resultDiv = document.getElementById('tempResult');
+
+            if (isNaN(input)) {
+                showResult(resultDiv, 'Please enter a valid number', true);
+                return;
+            }
+
+            let result;
+            let celsius;
+            
+            switch (fromUnit) {
+                case 'celsius':
+                    celsius = input;
+                    break;
+                case 'fahrenheit':
+                    celsius = (input - 32) * 5/9;
+                    break;
+                case 'kelvin':
+                    celsius = input - 273.15;
+                    break;
+            }
+
+            switch (toUnit) {
+                case 'celsius':
+                    result = celsius;
+                    break;
+                case 'fahrenheit':
+                    result = celsius * 9/5 + 32;
+                    break;
+                case 'kelvin':
+                    result = celsius + 273.15;
+                    break;
+            }
+
+            showResult(resultDiv, `${input} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`);
+        }
+
+        function showResult(resultDiv, message, isError = false) {
+            resultDiv.textContent = message;
+            resultDiv.style.display = 'block';
+            
+            if (isError) {
+                resultDiv.classList.add('error');
+            } else {
+                resultDiv.classList.remove('error');
+            }
+        }
+
+        // Calculator Logic
+        let currentDisplay = '0';
+        let previousValue = null;
+        let operation = null;
+        let waitingForNewValue = false;
+
+        function updateDisplay() {
+            document.getElementById('calcDisplay').textContent = currentDisplay;
+        }
+
+        function appendToDisplay(value) {
+            if (waitingForNewValue) {
+                currentDisplay = value;
+                waitingForNewValue = false;
+            } else {
+                if (currentDisplay === '0' && value !== '.') {
+                    currentDisplay = value;
+                } else {
+                    currentDisplay += value;
+                }
+            }
+            updateDisplay();
+        }
+
+        function clearCalc() {
+            currentDisplay = '0';
+            previousValue = null;
+            operation = null;
+            waitingForNewValue = false;
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            if (currentDisplay.length === 1) {
+                currentDisplay = '0';
+            } else {
+                currentDisplay = currentDisplay.slice(0, -1);
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            if (operation && previousValue !== null) {
+                const current = parseFloat(currentDisplay);
+                const previous = parseFloat(previousValue);
+                let result;
+
+                switch (operation) {
+                    case '+':
+                        result = previous + current;
+                        break;
+                    case '-':
+                        result = previous - current;
+                        break;
+                    case '*':
+                        result = previous * current;
+                        break;
+                    case '/':
+                        result = previous / current;
+                        break;
+                    case '%':
+                        result = previous % current;
+                        break;
+                }
+
+                currentDisplay = result.toString();
+                operation = null;
+                previousValue = null;
+                waitingForNewValue = true;
+                updateDisplay();
+            }
+        }
+
+        // Handle operator buttons
+        function handleOperator(op) {
+            if (previousValue === null) {
+                previousValue = currentDisplay;
+            } else if (operation) {
+                calculate();
+                previousValue = currentDisplay;
+            }
+            operation = op;
+            waitingForNewValue = true;
+        }
+
+        // Add event listeners for Enter key
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.input-field');
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        if (this.id === 'lengthInput') convertLength();
+                        else if (this.id === 'weightInput') convertWeight();
+                        else if (this.id === 'tempInput') convertTemperature();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
